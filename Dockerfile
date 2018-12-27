@@ -1,6 +1,6 @@
 FROM centos:7
 MAINTAINER Erik M Jacobs <erikmjacobs@gmail.com>
-ENV hass_ver=0.82.1
+ENV hass_ver=0.84.6
 VOLUME /opt/homeassistant
 
 # centos7 doesn't have python36 
@@ -26,10 +26,10 @@ RUN ln -s /usr/bin/python3.6 /usr/bin/python3 && \
 
 # Install hass component dependencies
 COPY requirements_all.txt requirements_all.txt
-# Uninstall enum34 because some dependencies install it but breaks Python 3.4+.
-# See PR #8103 for more info.
-RUN export LC_ALL="en_US.UTF-8" && pip3 install --no-cache-dir -r requirements_all.txt \
-    && pip3 install --no-cache-dir mysqlclient psycopg2 uvloop cchardet cython \
+RUN export LC_ALL="en_US.UTF-8" && pip3 install --no-cache-dir -r requirements_all.txt
+
+# Install hass
+RUN export LC_ALL="en_US.UTF-8" && pip3 install --no-cache-dir mysqlclient psycopg2 uvloop cchardet cython \
     homeassistant==$hass_ver networkx
 
 # cleanup annoying deps and reinstall git
@@ -38,7 +38,10 @@ RUN yum -y remove gcc cpp glibc-devel glibc-headers kernel-headers make \
   redhat-rpm-config zip glib2-devel pcre-devel gcc-c++ libstdc++-devel systemd-devel \
   m4 autoconf mariadb-devel keyutils-libs-devel krb5-devel libcom_err-devel libselinux-devel \
   libsepol-devel libverto-devel openssl-devel zlib-devel \
-  && yum -y install git && yum -y update
+  && yum -y install git \
+  && yum -y update \
+  && yum clean all \
+  && rm -rf /var/cache/yum
 
 USER 10101
 CMD hass -c /opt/homeassistant
