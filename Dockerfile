@@ -13,11 +13,6 @@ RUN yum -y install epel-release \
     && curl -o /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py \
     && /usr/bin/python36 /tmp/get-pip.py
 
-# weird python stuff for depsolving and building openzwave
-RUN python36 -m pip install cython wheel six \
-    && python36 -m pip install 'PyDispatcher>=2.0.5' 
-#    && python36 -m pip install python-openzwave==0.4.10
-
 # python zwave graph
 COPY home-assistant-z-wave-graph /tmp/home-assistant-z-wave-graph
 RUN ln -s /usr/bin/python3.6 /usr/bin/python3 && \
@@ -30,7 +25,7 @@ RUN export LC_ALL="en_US.UTF-8" && pip3 install --no-cache-dir -r requirements_a
 
 # Install hass
 RUN export LC_ALL="en_US.UTF-8" && pip3 install --no-cache-dir mysqlclient psycopg2 uvloop cchardet cython \
-    homeassistant==$hass_ver networkx
+    homeassistant==$hass_ver networkx 
 
 # cleanup annoying deps and reinstall git
 RUN yum -y remove gcc cpp glibc-devel glibc-headers kernel-headers make \
