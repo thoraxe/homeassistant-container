@@ -1,6 +1,6 @@
 FROM centos:7
 MAINTAINER Erik M Jacobs <erikmjacobs@gmail.com>
-ENV hass_ver=0.84.6
+ENV hass_ver=0.86.4
 VOLUME /opt/homeassistant
 
 # centos7 doesn't have python36 
